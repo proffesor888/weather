@@ -1,13 +1,29 @@
-import { countries, coordinates, getApiUrl } from "@/data";
+import { useState } from "react";
+import { countries, getRequestPerCity, getResponceArray } from "@/data";
 import { GetServerSideProps } from "next";
-import { Table } from "../app/components/Table";
-import { Chart } from "../app/components/Chart";
+import { Table } from "../app/components/Table/Table";
+import { Chart } from "../app/components/Chart/Chart";
+import { ICityForecast } from "@/types";
 
-export default function WeatherApp(props: any) {
+interface IWaetherAppProps {
+  res: Array<ICityForecast>;
+}
+
+export default function WeatherApp({res}: IWaetherAppProps) {
+  const [selectedCityForecast, selectCity] = useState<ICityForecast>(res[0]); 
+  const onCityClick = async (e: React.SyntheticEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement;
+    const city = target.dataset["name"];
+    if(city) {
+      const requestsArray = [getRequestPerCity(city)];
+      const selectedForecast = await getResponceArray(requestsArray, [city]);
+      selectCity(selectedForecast[0])
+    }
+  };
   return (
     <div>
-      <Chart data={props.res[0]}/>
-      <Table data={props.res} />
+      <Chart data={selectedCityForecast}/>
+      <Table onCityClick={onCityClick} data={res} />
     </div>
   );
 }
@@ -21,19 +37,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     country = query["country"] as string;
   }
   const cities = countries.get(country) || [];
-  const requestsArray = cities?.map((city) => {
-    const cityCoordinates = coordinates.get(city);
-    return getApiUrl(cityCoordinates?.lat, cityCoordinates?.long);
-  });
-  const res = await Promise.all(requestsArray.map((url) => fetch(url))).then(
-    async (res) => {
-      return Promise.all(res.map(async (data) => await data.json()));
-    }
-  );
-  const result = res.map((responce, index) => {
-    if (cities) {
-      return { ...responce, cityName: cities[index], country };
-    }
-  });
-  return { props: { res: result } };
+  const requestsArray = cities?.map((city) => getRequestPerCity(city));
+  return { props: { res:  await getResponceArray(requestsArray, cities)} };
 };
