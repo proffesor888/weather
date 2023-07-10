@@ -1,0 +1,43 @@
+table {
+    border: thin solid transparent;
+    overflow: hidden;
+    border-radius: 12px;
+    font-family: "Helvetica Now", "sans-serif";
+}
+
+table thead {
+    background-color: #030303;
+}
+
+table thead th {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 700;
+    width: 133px;
+    text-align: end;
+    padding: 5px 10px
+}
+
+table thead th:first-child {
+    text-align: start;
+}
+
+table th {
+    color: #FDFCFF;
+}
+
+table tbody th {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 400;
+    text-align: end;
+    padding: 5px 10px
+}
+
+table tbody th:first-child {
+    text-align: start;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #313131;
+}
