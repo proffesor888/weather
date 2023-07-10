@@ -20,25 +20,7 @@ export const countries = new Map([
   ],
 ]);
 
-export const weekDays = [
-  "Mon",
-  "Tue",
-  "Wed",
-  "Thu",
-  "Fri",
-  "Sat",
-  "Sun"
-]
-
-// export const weekDays = {
-//   "0": "Mon",
-//   "1": "Tue",
-//   "2": "Wed",
-//   "3": "Thu",
-//   "4": "Fri",
-//   "5": "Sat",
-//   "6": "Sun"
-// }
+export const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export const coordinates = new Map([
   ["Kyiv", { lat: "50.4", long: "30.5" }],
@@ -52,15 +34,18 @@ export const coordinates = new Map([
 ]);
 
 export const getApiUrl = (lat: string = "", long: string = ""): string => {
-    return `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,winddirection_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&current_weather=true`;
-}
+  return `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,winddirection_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&current_weather=true`;
+};
 
 export const getRequestPerCity = (city: string): string => {
   const cityCoordinates = coordinates.get(city);
   return getApiUrl(cityCoordinates?.lat, cityCoordinates?.long);
-} 
+};
 
-export const getResponceArray = async (requestsArray: string[], cities: string[]) => {
+export const getResponceArray = async (
+  requestsArray: string[],
+  cities: string[]
+) => {
   const res = await Promise.all(requestsArray.map((url) => fetch(url))).then(
     async (res) => {
       return Promise.all(res.map(async (data) => await data.json()));
@@ -72,4 +57,10 @@ export const getResponceArray = async (requestsArray: string[], cities: string[]
       return { ...responce, cityName: cities[index] };
     }
   });
-}
+};
+
+export const getArrayRange = (start: number, stop: number, step: number) =>
+  Array.from(
+    { length: (stop - start) / step + 1 },
+    (_, index) => start + index * step
+  );
