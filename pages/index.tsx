@@ -4,6 +4,7 @@ import { GetServerSideProps } from "next";
 import { Table } from "../app/components/Table/Table";
 import { Chart } from "../app/components/Chart/Chart";
 import { ICityForecast } from "@/types";
+import "./index.css";
 
 interface IWaetherAppProps {
   res: Array<ICityForecast>;
@@ -21,7 +22,7 @@ export default function WeatherApp({res}: IWaetherAppProps) {
     }
   };
   return (
-    <div>
+    <div className="app-container">
       <Chart data={selectedCityForecast}/>
       <Table onCityClick={onCityClick} data={res} />
     </div>

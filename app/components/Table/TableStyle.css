@@ -3,6 +3,7 @@ table {
     overflow: hidden;
     border-radius: 12px;
     font-family: "Helvetica Now", "sans-serif";
+    background-color: #1A1A1A;
 }
 
 table thead {
@@ -24,6 +25,7 @@ table thead th:first-child {
 
 table th {
     color: #FDFCFF;
+    cursor: pointer;
 }
 
 table tbody th {

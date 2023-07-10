@@ -1,0 +1,30 @@
+.chart-container {
+    position: relative;
+    height: 432px; 
+    width: 453px; 
+    background-color: #1A1A1A;
+    border-radius: 12px;
+    padding-top: 7%;
+}
+
+.recharts-wrapper {
+    position: unset !important;
+}
+
+.recharts-wrapper text {
+    fill: white;
+    font-size: 14px;
+}
+
+.recharts-legend-wrapper {
+    top: 25px !important;
+    color: white;
+}
+
+.chart-name {
+    position: absolute;
+    top: 25px;
+    left: 45px;
+    color: white;
+    font-size: 16px;
+}
