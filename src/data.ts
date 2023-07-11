@@ -67,9 +67,8 @@ export const getArrayRange = (start: number, stop: number, step: number) =>
     (_, index) => start + index * step
   );
 
-//export const getFilterByCountry = (cities: Array<ICityForecast>, )
 
-class FilterInitilizer {
+export class FilterInitilizer {
   cities: ICityForecast[];
   constructor(cities: ICityForecast[]) {
     this.cities = cities;
@@ -96,20 +95,4 @@ class FilterInitilizer {
   getCities() {
     return this.cities;
   }
-}
-
-export const getTemperatureFilteredArray = (cities: Array<ICityForecast>, min: number, max: number) => {
-  return cities.filter((cityData: ICityForecast) => (
-    Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= min && Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= max
-  ))
-}
-
-export const getCityTemperatureFilteredArray = (cities: Array<ICityForecast>, min: number, max: number, cityName: string) => {
-  return cities.filter((cityData: ICityForecast) => (
-    Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= min 
-    && 
-    Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= max
-    &&
-    cityData.cityName === cityName
-  ))
 }

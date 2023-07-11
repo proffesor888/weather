@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { countries, getRequestPerCity, getResponceArray, getTemperatureFilteredArray } from "@/data";
+import { FilterInitilizer, countries, getRequestPerCity, getResponceArray } from "@/data";
 import { GetServerSideProps } from "next";
 import { Table } from "../app/components/Table/Table";
 import { Chart } from "../app/components/Chart/Chart";
-import { Filters } from "../app/components/FIlters/Filters";
+import { Filters } from "../app/components/Filters/Filters";
 import { ICityForecast } from "@/types";
 import "./index.css";
 
@@ -19,36 +19,22 @@ export default function WeatherApp({ res }: IWaetherAppProps) {
   const [country, setCountry] = useState<string>("All");
 
   useEffect(() => {
-    let updatedCitiesArray = null;
-    if(minTemperature !== undefined && maxTemperature !== undefined) {
-      updatedCitiesArray = getTemperatureFilteredArray(res, minTemperature, maxTemperature);
-    } else if(maxTemperature === undefined && minTemperature) {
-      updatedCitiesArray = res.filter((cityData: ICityForecast) => (
-        Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= minTemperature
-      ));
-    } else {
-      updatedCitiesArray = maxTemperature ? res.filter((cityData: ICityForecast) => (
-        Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= maxTemperature
-      )) : res
-    }
-    setCitiesToDisplay(updatedCitiesArray);
+    applyFilter();
   }, [minTemperature]);
 
   useEffect(() => {
-    let updatedCitiesArray = null;
-    if(minTemperature !== undefined && maxTemperature !== undefined) {
-      updatedCitiesArray = getTemperatureFilteredArray(res, minTemperature, maxTemperature);
-    } else if(minTemperature === undefined && maxTemperature) {
-      updatedCitiesArray = res.filter((cityData: ICityForecast) => (
-        Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= maxTemperature
-      ));
-    } else {
-      updatedCitiesArray = minTemperature ? res.filter((cityData: ICityForecast) => (
-        Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) <= minTemperature
-      )) : res
-    }
-    setCitiesToDisplay(updatedCitiesArray);
+    applyFilter();
   }, [maxTemperature]);
+
+  const applyFilter = (newCountry?: string) => {
+    let filterController: FilterInitilizer | null = new FilterInitilizer(res);
+    filterController.filterByCountry(newCountry ? newCountry : country);
+    minTemperature !== undefined && filterController.filterCitiesByMinTemp(minTemperature);
+    maxTemperature !== undefined && filterController.filterCitiesByMaxTemp(maxTemperature);
+    setCitiesToDisplay(filterController.getCities());
+    filterController = null;
+  }
+
 
   const onTemperatureSelect = (type: string, value: string) => {
     const formtattedValue = value !== "undefined" ? +value : undefined;
@@ -60,23 +46,7 @@ export default function WeatherApp({ res }: IWaetherAppProps) {
   };
   
   const onCountrySelect = (value: string) => {
-    let displayCities = null;
-    const cities = countries.get(value);
-    const updatedCitiesArray = res.filter((cityData: ICityForecast) => (
-      cities?.includes(cityData.cityName)
-    ));
-    if(maxTemperature !== undefined && minTemperature !== undefined) {
-      displayCities = getTemperatureFilteredArray(updatedCitiesArray, minTemperature, maxTemperature);
-    } else if(maxTemperature && minTemperature === undefined) {
-      displayCities = updatedCitiesArray.filter((cityData: ICityForecast) => (
-        Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= maxTemperature
-      ));
-    } else {
-      displayCities = minTemperature ? updatedCitiesArray.filter((cityData: ICityForecast) => (
-        Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= minTemperature
-      )) : [];
-    }
-    setCitiesToDisplay(displayCities);
+    applyFilter(value);
     setCountry(value);
   }
 
