@@ -1,14 +1,12 @@
 import {
   BarChart,
   Bar,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Label,
 } from "recharts";
 import { weekDays } from "@/data";
 import { IDaily, ICityForecast } from "@/types";
@@ -32,7 +30,7 @@ export const Chart = ({ data }: IChartProps) => {
   const chartData = generateChartData(data.daily);
   return (
     <div className="chart-container">
-      <text className="chart-name">Analytics</text>
+      <text className="chart-name">Analytics - {data.cityName}</text>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           width={500}

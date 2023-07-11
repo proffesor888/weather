@@ -1,0 +1,14 @@
+.select-filter-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.select-filter {
+    background-color: #515151;
+    border-radius: 12px;
+    padding: 11px 16px;
+    color: #A4A4A4;
+    width: 160px;
+}

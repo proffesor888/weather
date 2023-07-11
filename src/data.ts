@@ -73,16 +73,20 @@ export class FilterInitilizer {
   constructor(cities: ICityForecast[]) {
     this.cities = cities;
   }
-  filterCitiesByMaxTemp(temp: number) {
-    this.cities = this.cities.filter((cityData: ICityForecast) => (
-      Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= temp
-    ));
+  filterCitiesByMaxTemp(temp?: number) {
+    if(temp) {
+      this.cities = this.cities.filter((cityData: ICityForecast) => (
+        Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= temp
+      ));
+    }
     return this;
   }
-  filterCitiesByMinTemp(temp: number) {
-    this.cities = this.cities.filter((cityData: ICityForecast) => (
-      Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= temp
-    ));
+  filterCitiesByMinTemp(temp?: number) {
+    if(temp) {
+      this.cities = this.cities.filter((cityData: ICityForecast) => (
+        Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= temp
+      ));
+    }
     return this;
   }
   filterByCountry(country: string) {

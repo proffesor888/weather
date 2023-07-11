@@ -28,9 +28,11 @@ export default function WeatherApp({ res }: IWaetherAppProps) {
 
   const applyFilter = (newCountry?: string) => {
     let filterController: FilterInitilizer | null = new FilterInitilizer(res);
-    filterController.filterByCountry(newCountry ? newCountry : country);
-    minTemperature !== undefined && filterController.filterCitiesByMinTemp(minTemperature);
-    maxTemperature !== undefined && filterController.filterCitiesByMaxTemp(maxTemperature);
+    filterController
+      .filterByCountry(newCountry ? newCountry : country)
+      .filterCitiesByMaxTemp(maxTemperature)
+      .filterCitiesByMinTemp(minTemperature)
+      .getCities()
     setCitiesToDisplay(filterController.getCities());
     filterController = null;
   }
@@ -62,7 +64,7 @@ export default function WeatherApp({ res }: IWaetherAppProps) {
   return (
     <div className="app-container">
       <Chart data={selectedCityForecast} />
-      <div>
+      <div className="table-container">
         <Filters
           onTemperatureSelect={onTemperatureSelect}
           maxTemperature={maxTemperature}

@@ -3,3 +3,9 @@
     flex-direction: row;
     gap: 20px;
 }
+
+.table-container {
+    padding: 25px 15px;
+    background-color: #1A1A1A;
+    border-radius: 16px;
+}
