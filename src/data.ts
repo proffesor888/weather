@@ -1,3 +1,5 @@
+import { ICityForecast } from "./types";
+
 export const countries = new Map([
   ["Ukraine", ["Kyiv", "Dnipro", "Odessa"]],
   ["GB", ["London"]],
@@ -64,3 +66,47 @@ export const getArrayRange = (start: number, stop: number, step: number) =>
     { length: (stop - start) / step + 1 },
     (_, index) => start + index * step
   );
+
+//export const getFilterByCountry = (cities: Array<ICityForecast>, )
+
+class FilterInitilizer {
+  cities: ICityForecast[];
+  //filterByCountry: (country: string) => void;
+  constructor(cities: ICityForecast[]) {
+    this.cities = cities;
+  }
+  filterCitiesByMaxTemp(temp: number) {
+    this.cities = this.cities.filter((cityData: ICityForecast) => (
+      Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= temp
+    ));
+    return this;
+  }
+  filterCitiesByMinTemp(temp: number) {
+    this.cities = this.cities.filter((cityData: ICityForecast) => (
+      Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= temp
+    ));
+    return this;
+  }
+  // filterByCityName(cityName: string) {
+
+  // }
+  getCities() {
+    return this.cities;
+  }
+}
+
+export const getTemperatureFilteredArray = (cities: Array<ICityForecast>, min: number, max: number) => {
+  return cities.filter((cityData: ICityForecast) => (
+    Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= min && Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= max
+  ))
+}
+
+export const getCityTemperatureFilteredArray = (cities: Array<ICityForecast>, min: number, max: number, cityName: string) => {
+  return cities.filter((cityData: ICityForecast) => (
+    Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= min 
+    && 
+    Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= max
+    &&
+    cityData.cityName === cityName
+  ))
+}
