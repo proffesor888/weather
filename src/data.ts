@@ -71,7 +71,6 @@ export const getArrayRange = (start: number, stop: number, step: number) =>
 
 class FilterInitilizer {
   cities: ICityForecast[];
-  //filterByCountry: (country: string) => void;
   constructor(cities: ICityForecast[]) {
     this.cities = cities;
   }
@@ -87,9 +86,13 @@ class FilterInitilizer {
     ));
     return this;
   }
-  // filterByCityName(cityName: string) {
-
-  // }
+  filterByCountry(country: string) {
+    const countryCities = countries.get(country);
+    this.cities = this.cities.filter((cityData: ICityForecast) => (
+      countryCities?.includes(cityData.cityName)
+    ));
+    return this;
+  }
   getCities() {
     return this.cities;
   }
