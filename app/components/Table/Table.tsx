@@ -18,9 +18,9 @@ export const Table = ({ data, onCityClick }: ITableProps) => {
         </tr>
       </thead>
       <tbody>
-        {data.map((cityData: ICityForecast) => {
+        {data.map((cityData: ICityForecast, index) => {
             return(
-                <tr key={cityData.generationtime_ms}>
+                <tr key={index}>
                     <th data-name={cityData.cityName}>{cityData.cityName}</th>
                     <th data-name={cityData.cityName}>{cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]}</th>
                     <th data-name={cityData.cityName}>{cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]}</th>

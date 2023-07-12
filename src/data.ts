@@ -1,14 +1,8 @@
 import { ICityForecast } from "./types";
 
 export const countries = new Map([
-  ["Ukraine", ["Kyiv", "Dnipro", "Odessa"]],
-  ["GB", ["London"]],
-  ["Netherlands", ["Amsterdam"]],
-  ["Italy", ["Venice"]],
-  ["Finland", ["Helsinki"]],
-  ["Luxembourg", ["Luxembourg"]],
   [
-    "All",
+    "Country",
     [
       "Kyiv",
       "Dnipro",
@@ -20,9 +14,15 @@ export const countries = new Map([
       "Luxembourg",
     ],
   ],
+  ["Ukraine", ["Kyiv", "Dnipro", "Odessa"]],
+  ["GB", ["London"]],
+  ["Netherlands", ["Amsterdam"]],
+  ["Italy", ["Venice"]],
+  ["Finland", ["Helsinki"]],
+  ["Luxembourg", ["Luxembourg"]],
 ]);
 
-export const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+export const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export const coordinates = new Map([
   ["Kyiv", { lat: "50.4", long: "30.5" }],
@@ -35,8 +35,20 @@ export const coordinates = new Map([
   ["Amsterdam", { lat: "52.3", long: "4.8" }],
 ]);
 
+const extendDate = (month: string) => {
+  return month.replace(/(^|\D)(\d)(?!\d)/g, '$10$2');
+}
+
 export const getApiUrl = (lat: string = "", long: string = ""): string => {
-  return `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,winddirection_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&current_weather=true`;
+  const currentDate = new Date();
+  const prevDate = new Date(currentDate.getTime() - 6 * 24 * 60 * 60 * 1000);
+  const prevDateString = `${prevDate.getFullYear()}-${
+    extendDate(`${prevDate.getMonth() + 1}`)
+  }-${extendDate(`${prevDate.getDate()}`)}`;
+  const currentDateString = `${currentDate.getFullYear()}-${
+    extendDate(`${currentDate.getMonth() + 1}`)
+  }-${extendDate(`${currentDate.getDate()}`)}`;
+  return `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,winddirection_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&current_weather=true&start_date=${prevDateString}&end_date=${currentDateString}`;
 };
 
 export const getRequestPerCity = (city: string): string => {
@@ -67,33 +79,68 @@ export const getArrayRange = (start: number, stop: number, step: number) =>
     (_, index) => start + index * step
   );
 
+export const temperatureRange = getArrayRange(-80, 80, 1);
 
 export class FilterInitilizer {
   cities: ICityForecast[];
   constructor(cities: ICityForecast[]) {
     this.cities = cities;
   }
-  filterCitiesByMaxTemp(temp?: number) {
-    if(temp) {
-      this.cities = this.cities.filter((cityData: ICityForecast) => (
-        Math.floor(cityData.daily.temperature_2m_max[cityData.daily.temperature_2m_max.length - 1]) <= temp
-      ));
+  filterCitiesByMaxTemp(temp: number | string) {
+    if (temp === "Max") {
+      this.cities = this.cities.filter(
+        (cityData: ICityForecast) =>
+          Math.floor(
+            cityData.daily.temperature_2m_min[
+              cityData.daily.temperature_2m_min.length - 1
+            ]
+          ) <
+          temperatureRange[temperatureRange.length - 1] + 1
+      );
+    } else if (typeof temp === "number") {
+      this.cities = this.cities.filter(
+        (cityData: ICityForecast) =>
+          Math.floor(
+            cityData.daily.temperature_2m_max[
+              cityData.daily.temperature_2m_max.length - 1
+            ]
+          ) <= temp
+      );
     }
     return this;
   }
-  filterCitiesByMinTemp(temp?: number) {
-    if(temp) {
-      this.cities = this.cities.filter((cityData: ICityForecast) => (
-        Math.floor(cityData.daily.temperature_2m_min[cityData.daily.temperature_2m_min.length - 1]) >= temp
-      ));
+  filterCitiesByMinTemp(temp: number | string) {
+    if (temp === "Min") {
+      this.cities = this.cities.filter(
+        (cityData: ICityForecast) =>
+          Math.floor(
+            cityData.daily.temperature_2m_min[
+              cityData.daily.temperature_2m_min.length - 1
+            ]
+          ) >
+          temperatureRange[0] - 1
+      );
+    } else if (typeof temp === "number") {
+      this.cities = this.cities.filter(
+        (cityData: ICityForecast) =>
+          Math.floor(
+            cityData.daily.temperature_2m_min[
+              cityData.daily.temperature_2m_min.length - 1
+            ]
+          ) >= temp
+      );
     }
     return this;
   }
-  filterByCountry(country: string) {
-    const countryCities = countries.get(country);
-    this.cities = this.cities.filter((cityData: ICityForecast) => (
-      countryCities?.includes(cityData.cityName)
-    ));
+  filterByCountry(countryArray: string[]) {
+    const countryCities: string[][] = [];
+    for (const country of countryArray) {
+      let cities = countries.get(country) as string[];
+      countryCities.push(cities);
+    }
+    this.cities = this.cities.filter((cityData: ICityForecast) =>
+      countryCities.flat().includes(cityData.cityName)
+    );
     return this;
   }
   getCities() {

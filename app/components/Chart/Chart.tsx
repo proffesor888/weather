@@ -14,9 +14,10 @@ import "./ChartStyle.css";
 
 const generateChartData = (daily: IDaily) => {
   const { time, temperature_2m_max, temperature_2m_min } = daily;
-  return time.map((_, index: number) => {
+  return time.map((date, index: number) => {
+    const dayNumber = new Date(date).getDay();
     return {
-      name: weekDays[index],
+      name: weekDays[dayNumber],
       Temperature: (temperature_2m_max[index] + temperature_2m_min[index]) / 2,
     };
   });

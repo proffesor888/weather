@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { FilterInitilizer, countries, getRequestPerCity, getResponceArray } from "@/data";
+import {
+  FilterInitilizer,
+  countries,
+  getRequestPerCity,
+  getResponceArray,
+} from "@/data";
 import { GetServerSideProps } from "next";
 import { Table } from "../app/components/Table/Table";
 import { Chart } from "../app/components/Chart/Chart";
@@ -13,11 +18,10 @@ interface IWaetherAppProps {
 
 export default function WeatherApp({ res }: IWaetherAppProps) {
   const [selectedCityForecast, selectCity] = useState<ICityForecast>(res[0]);
-  const [minTemperature, setMinTemperature] = useState<number | undefined>(undefined);
-  const [maxTemperature, setMaxTemperature] = useState<number | undefined>(undefined);
+  const [minTemperature, setMinTemperature] = useState<number | string>("Min");
+  const [maxTemperature, setMaxTemperature] = useState<number | string>("Max");
   const [citiesToDisplay, setCitiesToDisplay] = useState<ICityForecast[]>(res);
-  const [country, setCountry] = useState<string>("All");
-
+  const [country, setCountry] = useState<string[]>(["Country"]);
   useEffect(() => {
     applyFilter();
   }, [minTemperature]);
@@ -26,31 +30,29 @@ export default function WeatherApp({ res }: IWaetherAppProps) {
     applyFilter();
   }, [maxTemperature]);
 
-  const applyFilter = (newCountry?: string) => {
+  const applyFilter = (newCountry?: string[]) => {
     let filterController: FilterInitilizer | null = new FilterInitilizer(res);
     filterController
       .filterByCountry(newCountry ? newCountry : country)
       .filterCitiesByMaxTemp(maxTemperature)
       .filterCitiesByMinTemp(minTemperature)
-      .getCities()
+      .getCities();
     setCitiesToDisplay(filterController.getCities());
     filterController = null;
-  }
+  };
 
-
-  const onTemperatureSelect = (type: string, value: string) => {
-    const formtattedValue = value !== "undefined" ? +value : undefined;
+  const onTemperatureSelect = (type: string, value: number | string) => {
     if (type === "max") {
-      setMaxTemperature(formtattedValue);
+      setMaxTemperature(value);
     } else {
-      setMinTemperature(formtattedValue);
+      setMinTemperature(value);
     }
   };
-  
-  const onCountrySelect = (value: string) => {
+
+  const onCountrySelect = (value: string[]) => {
     applyFilter(value);
     setCountry(value);
-  }
+  };
 
   const onCityClick = async (e: React.SyntheticEvent<HTMLElement>) => {
     const target = e.target as HTMLElement;
@@ -78,15 +80,8 @@ export default function WeatherApp({ res }: IWaetherAppProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { query } = context;
-  let country: string | null = null;
-  if (!Object.keys(query).length || query["country"] === "all") {
-    country = "All";
-  } else {
-    country = query["country"] as string;
-  }
-  const cities = countries.get(country) || [];
+export const getServerSideProps: GetServerSideProps = async () => {
+  const cities = countries.get("Country") || [];
   const requestsArray = cities?.map((city) => getRequestPerCity(city));
   return { props: { res: await getResponceArray(requestsArray, cities) } };
 };

@@ -5,10 +5,20 @@
     margin-bottom: 15px;
 }
 
+.select-filter-container .MuiSelect-select {
+    padding: 0;
+    font-family: Helvetica, sans-serif;
+}
+
+.select-filter-container .MuiInputBase-root {
+    font-family: Helvetica, sans-serif;
+}
+
 .select-filter {
     background-color: #515151;
     border-radius: 12px;
     padding: 11px 16px;
     color: #A4A4A4;
     width: 160px;
+    height: 40px;
 }
