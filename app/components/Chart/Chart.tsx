@@ -8,7 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { weekDays } from "@/data";
+import { weekDays } from "@/utils";
 import { IDaily, ICityForecast } from "@/types";
 import "./ChartStyle.css";
 

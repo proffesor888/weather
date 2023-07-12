@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import {
-  FilterInitilizer,
   countries,
   getRequestPerCity,
   getResponceArray,
-} from "@/data";
+} from "@/utils";
+import { FilterController } from "@/filterController";
 import { GetServerSideProps } from "next";
 import { Table } from "../app/components/Table/Table";
 import { Chart } from "../app/components/Chart/Chart";
@@ -31,7 +31,7 @@ export default function WeatherApp({ res }: IWaetherAppProps) {
   }, [maxTemperature]);
 
   const applyFilter = (newCountry?: string[]) => {
-    let filterController: FilterInitilizer | null = new FilterInitilizer(res);
+    let filterController: FilterController | null = new FilterController(res);
     filterController
       .filterByCountry(newCountry ? newCountry : country)
       .filterCitiesByMaxTemp(maxTemperature)

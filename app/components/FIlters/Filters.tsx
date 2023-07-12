@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { countries, temperatureRange } from "@/data";
+import { countries, temperatureRange } from "@/utils";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import "./FilterStyle.css";
@@ -25,10 +25,10 @@ export const Filters = (props: IFilterProps) => {
     const {
       target: { value },
     } = event;
-    if(selections.includes("Country")) {
-        setSelections(value.slice(1));
+    if (selections.includes("Country")) {
+      setSelections(value.slice(1));
     } else {
-        setSelections(typeof value === "string" ? value.split(",") : value);
+      setSelections(typeof value === "string" ? value.split(",") : value);
     }
   };
   const submitCountries = () => {
@@ -45,14 +45,11 @@ export const Filters = (props: IFilterProps) => {
         onClose={submitCountries}
         className="select-filter"
       >
-        {countryList.map(
-          (country, index) =>
-            (
-              <MenuItem value={country} key={index}>
-                {country}
-              </MenuItem>
-            )
-        )}
+        {countryList.map((country, index) => (
+          <MenuItem value={country} key={index}>
+            {country}
+          </MenuItem>
+        ))}
       </Select>
       <Select
         className="select-filter"
@@ -62,9 +59,7 @@ export const Filters = (props: IFilterProps) => {
         <MenuItem value="Min">Min</MenuItem>
         {temperatureRange.map((min) => (
           <MenuItem
-            disabled={
-              maxTemperature !== "Max" ? min >= +maxTemperature : false
-            }
+            disabled={maxTemperature !== "Max" ? min >= +maxTemperature : false}
             value={min}
           >
             {min}
@@ -79,9 +74,7 @@ export const Filters = (props: IFilterProps) => {
         <MenuItem value="Max">Max</MenuItem>
         {temperatureRange.map((max) => (
           <MenuItem
-            disabled={
-              minTemperature !== "Min" ? max <= +minTemperature : false
-            }
+            disabled={minTemperature !== "Min" ? max <= +minTemperature : false}
             value={max}
           >
             {max}
